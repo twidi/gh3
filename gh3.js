@@ -68,10 +68,10 @@
 		child.prototype = new ctor();
 	
 		//instance properties
-		if(protoProps) merge(child.prototype, protoProps);
+		if(protoProps) { merge(child.prototype, protoProps); }
 	
 		//static properties
-		if(staticProps) merge(child, staticProps);
+		if(staticProps) { merge(child, staticProps); }
 	
 		// Correctly set child's `prototype.constructor`.
 		child.prototype.constructor = child;
@@ -79,7 +79,7 @@
 		// Set a convenience property in case the parent's prototype is needed later.
 		child.__super__ = parent.prototype;
 	
-		return child
+		return child;
 	
 	};
 	Kind.extend = function (protoProps, staticProps) {
@@ -222,16 +222,16 @@
 				return utftext;
 		}		
 			 
-	}
+	};
 
 
 	Gh3.Base64 = Base64;
 
-	if (window.XDomainRequest != null) {
+	if (window.XDomainRequest !== null) {
 		try {
-			new XDomainRequest()
-			$.support.cors = true
-			$.ajaxSetup.xhr = function() { return new XDomainRequest() }
+			new XDomainRequest();
+			$.support.cors = true;
+			$.ajaxSetup.xhr = function() { return new XDomainRequest(); };
 		} catch (e) {}
 	}
 
@@ -243,12 +243,12 @@
 		callHttpApi : function (apiParams) {
 			apiParams.url = Gh3.Helper.protocol + "://" + Gh3.Helper.domain + "/" + apiParams.service;
 			if ($.support.cors) {
-				apiParams.headers = { Origin: location.host }
-				var success = apiParams.success
+				apiParams.headers = { Origin: location.host };
+				var success = apiParams.success;
 				if ($.isFunction(success)) {
 					apiParams.success = function (data, textStatus, jqXHR) {
-						success.call(this, {data: data}, textStatus, jqXHR)
-					}
+						success.call(this, {data: data}, textStatus, jqXHR);
+					};
 				}
 			} else {
 				//delete apiParams.service;
@@ -274,10 +274,10 @@
 						Gh3.Users.users.push(new Gh3.User(user.login, user));
 					});
 					
-					if (callback) callback(null, Gh3.Users);
+					if (callback) { callback(null, Gh3.Users); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -334,10 +334,10 @@
 					for(var prop in res.data) {
 						that[prop] = res.data[prop];
 					}
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 			
@@ -380,10 +380,10 @@
 					for(var prop in res.data) {
 						that[prop] = res.data[prop];
 					}
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -400,10 +400,10 @@
 					_.each(res.data, function (comment) {
 						that.comments.push(new Gh3.GistComment(comment));
 					});
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 	
@@ -436,9 +436,9 @@
 
 	Gh3.Gists = Kind.extend({//http://developer.github.com/v3/gists/
 		constructor : function (ghUser) {
-			if (ghUser) this.user = ghUser;
-			this.gists = []
-		}, 
+			if (ghUser) { this.user = ghUser; }
+			this.gists = [];
+		},
 		fetch : function (pagesInfo, paginationInfo, callback) {//http://developer.github.com/v3/#pagination
 			var that = this;
 
@@ -450,10 +450,10 @@
 					_.each(res.data, function (gist) {
 						that.gists.push(new Gh3.Gist(gist));
 					});
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -489,9 +489,9 @@
 			for(var prop in contentItem) {
 				this[prop] = contentItem[prop];
 			}
-			if (ghUser) this.user = ghUser;
-			if (repositoryName) this.repositoryName = repositoryName;
-			if (branchName) this.branchName = branchName;
+			if (ghUser) { this.user = ghUser; }
+			if (repositoryName) { this.repositoryName = repositoryName; }
+			if (branchName) { this.branchName = branchName; }
 		}
 
 	},{});
@@ -509,10 +509,10 @@
 					that.content = res.data.content;
 					that.rawContent = Base64.decode(res.data.content);
 
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -528,10 +528,10 @@
 					_.each(res.data, function (commit) {
 						that.commits.push(new Gh3.Commit(commit));
 					});
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -578,13 +578,13 @@
 				data : {ref: that.branchName },
 				success : function(res) {
 					_.each(res.data, function (item) {
-						if (item.type == "file") that.contents.push(new Gh3.File(item, that.user, that.repositoryName, that.branchName));
-						if (item.type == "dir") that.contents.push(new Gh3.Dir(item, that.user, that.repositoryName, that.branchName));
+						if (item.type == "file") { that.contents.push(new Gh3.File(item, that.user, that.repositoryName, that.branchName)); }
+						if (item.type == "dir") { that.contents.push(new Gh3.Dir(item, that.user, that.repositoryName, that.branchName)); }
 					});
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -623,12 +623,12 @@
 
 	Gh3.Branch = Kind.extend({
 		constructor : function (name, sha, url, ghUser, repositoryName) {
-			if (name) this.name = name;
-			if (sha) this.sha = sha;
-			if (url) this.url = url;
+			if (name) { this.name = name; }
+			if (sha) { this.sha = sha; }
+			if (url) { this.url = url; }
 
-			if (ghUser) this.user = ghUser;
-			if (repositoryName) this.repositoryName = repositoryName;
+			if (ghUser) { this.user = ghUser; }
+			if (repositoryName) { this.repositoryName = repositoryName; }
 
 		},
 
@@ -642,13 +642,13 @@
 				success : function(res) {
 					_.each(res.data, function (item) {
 
-						if (item.type == "file") that.contents.push(new Gh3.File(item, that.user, that.repositoryName, that.name));
-						if (item.type == "dir") that.contents.push(new Gh3.Dir(item, that.user, that.repositoryName, that.name));
+						if (item.type == "file") { that.contents.push(new Gh3.File(item, that.user, that.repositoryName, that.name)); }
+						if (item.type == "dir") { that.contents.push(new Gh3.Dir(item, that.user, that.repositoryName, that.name)); }
 					});
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -694,9 +694,9 @@
 				}
 			}
 
-			if (name) this.name = name; 
+			if (name) { this.name = name; }
 
-			if (ghUser) this.user = ghUser;
+			if (ghUser) { this.user = ghUser; }
 
 		},
 		fetch : function (callback) {
@@ -709,10 +709,10 @@
 					for(var prop in res.data) {
 						that[prop] = res.data[prop];
 					}
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -728,10 +728,10 @@
 						that.branches.push(new Gh3.Branch(branch.name, branch.commit.sha, branch.commit.url, that.user, that.name));
 					});
 					
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -765,7 +765,7 @@
 	Gh3.Repositories = Kind.extend({//http://developer.github.com/v3/repos/
 		constructor : function (ghUser) {
 
-			if (ghUser) this.user = ghUser;
+			if (ghUser) { this.user = ghUser; }
 
 		},
 		//List user repositories
@@ -782,10 +782,10 @@
 						that.repositories.push(new Gh3.Repository(repository.name, that.user));
 					});
 					
-					if (callback) callback(null, that);
+					if (callback) { callback(null, that); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
@@ -832,10 +832,10 @@
 						//owner & login : same thing ???
 					});
 					
-					if (callback) callback(null, Gh3.Repositories);
+					if (callback) { callback(null, Gh3.Repositories); }
 				},
 				error : function (res) {
-					if (callback) callback(new Error(res));
+					if (callback) { callback(new Error(res)); }
 				}
 			});
 
