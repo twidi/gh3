@@ -131,7 +131,7 @@ describe("Fetch data of repositories of a gitHub user : k33g", function () {
 		runs(function () {
 
 			k33gRepositories.fetch({page:1, per_page:100, direction : "desc"},"next", function (err, res) {
-				if(err) { throw "outch ..." }
+				if(err) { throw "outch ..."; }
 				console.log("Repositories", k33gRepositories);
 				console.log("TOTAL : ", k33gRepositories.getRepositories().length);
 			});
@@ -254,13 +254,13 @@ describe("get master branch of k33g.github.com repository", function () {
 						numberOfContents = master.getContents().length;
 					});
 										
-				})
+				});
 			});
 
 		}, "asynchronous method : fetchContents()");
 
 		waitsFor(function () {
-			return numberOfContents > 0
+			return numberOfContents > 0;
 		}, "...", 2000);
 
 		runs(function () {
@@ -297,7 +297,7 @@ describe("when contents of master branch are fetched", function () {
 
 					master.fetchContents(function (err, res) {
 						if(err) { throw "outch ..."; }
-						myfile = master.getFileByName("index.html")
+						myfile = master.getFileByName("index.html");
 
 						myfile.fetchContent(function (err, res) {
 							if(err) { throw "outch ..."; }
@@ -305,13 +305,13 @@ describe("when contents of master branch are fetched", function () {
 						});
 					});
 										
-				})
+				});
 			});
 
 		}, "asynchronous method : fetchContents()");
 
 		waitsFor(function () {
-			return rawContent.length > 0
+			return rawContent.length > 0;
 		}, "...", 2000);
 
 		runs(function () {
@@ -338,7 +338,7 @@ describe("when contents of master branch are fetched", function () {
 		}, "asynchronous method : fetchCommits()");
 
 		waitsFor(function () {
-			return numberOfCommits > 0
+			return numberOfCommits > 0;
 		}, "...", 1000);
 
 		runs(function () {
@@ -360,14 +360,14 @@ describe("when contents of master branch are fetched", function () {
 								
 				dir.eachContent(function (content) {
 					console.log(content.name, content.type, content.size);
-					numberOfContentsInDirectory ++
+					numberOfContentsInDirectory ++;
 				});
 			});
 
 		},"asynchronous method : fetchContents()");
 
 		waitsFor(function () {
-			return numberOfContentsInDirectory > 0
+			return numberOfContentsInDirectory > 0;
 		}, "...", 1000);
 
 		runs(function () {
@@ -404,7 +404,7 @@ describe("Get some gists of k33g", function () {
 		},"asynchronous method : fetch()");
 
 		waitsFor(function () {
-			return numberOfFoundGists > 3
+			return numberOfFoundGists > 3;
 		}, "...", 1000);	
 
 		runs(function () {
@@ -442,7 +442,7 @@ describe("Get gist where id = 1096826", function () {
 		},"asynchronous method : fetchContents()");
 
 		waitsFor(function () {
-			return numberOfFiles > 0
+			return numberOfFiles > 0;
 		}, "...", 1000);	
 
 		runs(function () {
@@ -467,7 +467,7 @@ describe("Get gist where id = 1096826", function () {
 		},"asynchronous method : fetchComments()");
 
 		waitsFor(function () {
-			return numberOfComments > 0
+			return numberOfComments > 0;
 		}, "...", 1000);	
 
 		runs(function () {
