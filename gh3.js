@@ -246,11 +246,13 @@
             'Content-Type': 'application/json'
         },
         dataType: 'json',
+        cache: true,
         callHttpApi : function (apiParams) {
             apiParams.url = Gh3.Helper.protocol + "://" + Gh3.Helper.domain + "/" + apiParams.service;
             if ($.support.cors) {
                 apiParams.headers = $.extend({}, Gh3.Helper.headers, apiParams.headers || {});
                 if (!apiParams.dataType) { apiParams.dataType = Gh3.Helper.dataType; }
+                if (!apiParams.cache && apiParams.cache !== false) { apiParams.cache = Gh3.Helper.cache; }
                 var success = apiParams.success;
                 if ($.isFunction(success)) {
                     apiParams.success = function (data, textStatus, jqXHR) {
