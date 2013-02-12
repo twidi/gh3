@@ -452,7 +452,7 @@
             Gh3.Helper.callHttpApi({
                 service : "users/"+that.user.login+"/gists",
                 data : pagesInfo,
-                beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
+                //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
                 success : function(res) {
                     _.each(res.data, function (gist) {
                         that.gists.push(new Gh3.Gist(gist));
@@ -783,7 +783,7 @@
             Gh3.Helper.callHttpApi({
                 service : "users/"+that.user.login+"/repos",
                 data : pagesInfoAndParameters,
-                beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
+                //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
                 success : function(res) {
                     _.each(res.data, function (repository) {
                         that.repositories.push(new Gh3.Repository(repository.name, that.user));
