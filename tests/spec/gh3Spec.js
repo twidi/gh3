@@ -261,7 +261,7 @@ describe("get master branch of k33g.github.com repository", function () {
 
 		waitsFor(function () {
 			return numberOfContents > 0
-		}, "...", 1000);
+		}, "...", 2000);
 
 		runs(function () {
 			console.log("numberOfContents : ", numberOfContents);
@@ -312,7 +312,7 @@ describe("when contents of master branch are fetched", function () {
 
 		waitsFor(function () {
 			return rawContent.length > 0
-		}, "...", 1000);
+		}, "...", 2000);
 
 		runs(function () {
 			console.log("rawContent : ", rawContent);
