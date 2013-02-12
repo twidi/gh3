@@ -227,7 +227,7 @@
 
     Gh3.Base64 = Base64;
 
-    if (window.XDomainRequest !== null) {
+    if (window.XDomainReques) {
         try {
             new XDomainRequest();
             $.support.cors = true;
@@ -240,10 +240,17 @@
     },{
         protocol : "https",
         domain : "api.github.com",
+        headers: {
+            Origin: location.host,
+            Accept: 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+        },
+        dataType: 'json',
         callHttpApi : function (apiParams) {
             apiParams.url = Gh3.Helper.protocol + "://" + Gh3.Helper.domain + "/" + apiParams.service;
             if ($.support.cors) {
-                apiParams.headers = { Origin: location.host };
+                apiParams.headers = $.extend({}, Gh3.Helper.headers, apiParams.headers || {});
+                if (!apiParams.dataType) { apiParams.dataType = Gh3.Helper.dataType; }
                 var success = apiParams.success;
                 if ($.isFunction(success)) {
                     apiParams.success = function (data, textStatus, jqXHR) {
