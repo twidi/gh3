@@ -267,6 +267,34 @@ describe("get k33g.github.com repository", function () {
 
 });
 
+describe("get gh3 readme", function() {
+
+    var k33g = new Gh3.User("k33g")
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g);
+
+    it("should have a readme containing 'wrapper for GitHub'", function () {
+
+        runs(function () {
+
+            gh3Repo.fetchReadme(function (err, res) {
+                if(err) { throw "outch ..."; }
+                console.log(gh3Repo);
+            });
+
+        }, "asynchronous method : fetchReadme()");
+
+        waitsFor(function () {
+            return gh3Repo.readme.length > 0;
+        }, "...", 1000);
+
+        runs(function () {
+            expect(gh3Repo.readme).toContain('wrapper for GitHub');
+        });
+
+    });
+
+});
+
 
 /*-----------------------------
     Branch, File & Directory

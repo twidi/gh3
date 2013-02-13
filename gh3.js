@@ -805,6 +805,26 @@
             } else {
                 this.branches.sort();
             }
+        },
+        fetchReadme: function (callback) {
+            var that = this;
+            that.readme = '';
+
+            Gh3.Helper.callHttpApi({
+                service: "repos/"+that.user.login+"/"+that.name+"/readme",
+                headers: {
+                    Accept: 'application/vnd.github.html+json',
+                    'Content-Type': 'text/html'
+                },
+                dataType: 'html',
+                success: function(res) {
+                    that.readme = res.data;
+                    if (callback) { callback(null, that); }
+                },
+                error: function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
         }
 
     },{});
