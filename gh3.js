@@ -984,7 +984,7 @@
                 //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
                 success : function(res) {
                     _.each(res.data, function (repository) {
-                        that.repositories.push(new Gh3.Repository(repository.name, that.user));
+                        that.repositories.push(new Gh3.Repository(repository.name, that.user, repository));
                     });
 
                     if (callback) { callback(null, that); }
