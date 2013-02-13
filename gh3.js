@@ -526,8 +526,98 @@
             } else {
                 this.starred.sort();
             }
+        },
+        fetchEvents : function (callback) {
+            var that = this;
+            that.events = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "users/"+that.login+"/events",
+                success : function(res) {
+                    _.each(res.data, function (event) {
+                        that.events.push(new Gh3.Event(event));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getEvents : function () { return this.events; },
+        getEventByType : function (type) {
+            return _.find(this.events, function (event) {
+                return event.type == type;
+            });
+        },
+        eachEvent : function (callback) {
+            _.each(this.events, function (event) {
+                callback(event);
+            });
+        },
+        reverseEvents : function () {
+            this.events.reverse();
+        },
+        sortEvents : function (comparison_func) {
+            if (comparison_func) {
+                this.events.sort(comparison_func);
+            } else {
+                this.events.sort();
+            }
+        },
+        fetchReceivedEvents : function (callback) {
+            var that = this;
+            that.received_events = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "users/"+that.login+"/received_events",
+                success : function(res) {
+                    _.each(res.data, function (event) {
+                        that.received_events.push(new Gh3.Event(event));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getReceivedEvents : function () { return this.received_events; },
+        getReceivedEventByType : function (type) {
+            return _.find(this.received_events, function (event) {
+                return event.type == type;
+            });
+        },
+        eachReceivedEvent : function (callback) {
+            _.each(this.received_events, function (event) {
+                callback(event);
+            });
+        },
+        reverseReceivedEvents : function () {
+            this.received_events.reverse();
+        },
+        sortReceivedEvents : function (comparison_func) {
+            if (comparison_func) {
+                this.received_events.sort(comparison_func);
+            } else {
+                this.received_events.sort();
+            }
         }
 
+    },{});
+
+
+    /*Events*/
+    Gh3.Event = Kind.extend({
+        constructor : function(eventData) {
+            for(var prop in eventData) {
+                this[prop] = eventData[prop];
+            }
+        }
     },{});
 
 
@@ -1090,6 +1180,46 @@
                 this.stargazers.sort(comparison_func);
             } else {
                 this.stargazers.sort();
+            }
+        },
+        fetchEvents : function (callback) {
+            var that = this;
+            that.events = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "repos/"+that.user.login+"/"+that.name+"/events",
+                success : function(res) {
+                    _.each(res.data, function (event) {
+                        that.events.push(new Gh3.Event(event));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getEvents : function () { return this.events; },
+        getEventByType : function (type) {
+            return _.find(this.events, function (event) {
+                return event.type == type;
+            });
+        },
+        eachEvent : function (callback) {
+            _.each(this.events, function (event) {
+                callback(event);
+            });
+        },
+        reverseEvents : function () {
+            this.events.reverse();
+        },
+        sortEvents : function (comparison_func) {
+            if (comparison_func) {
+                this.events.sort(comparison_func);
+            } else {
+                this.events.sort();
             }
         }
 

@@ -168,6 +168,55 @@ describe("Fetch starred repositories of a github user", function() {
 
 });
 
+describe("Fetch events emited and received by github user", function() {
+    var k33g = new Gh3.User("k33g")
+    ,   events = []
+    ,   received_events = [];
+
+    it("should have emited many events", function () {
+
+        runs(function () {
+
+            k33g.fetchEvents(function (err, res) {
+                if(err) { throw "outch ..."; }
+                events = res.events;
+            }, "asynchronous method: fetchEvents");
+
+        });
+
+        waitsFor(function() {
+            return events.length > 0;
+        }, "...", 1000);
+
+        runs(function() {
+            expect(k33g.events.length).toBeGreaterThan(10);
+        });
+
+    });
+
+    it("should have received many events", function () {
+
+        runs(function () {
+
+            k33g.fetchReceivedEvents(function (err, res) {
+                if(err) { throw "outch ..."; }
+                received_events = res.received_events;
+            }, "asynchronous method: fetchReceivedEvents");
+
+        });
+
+        waitsFor(function() {
+            return received_events.length > 0;
+        }, "...", 1000);
+
+        runs(function() {
+            expect(k33g.received_events.length).toBeGreaterThan(10);
+        });
+
+    });
+
+});
+
 /*-----------------------------
     Users
 -----------------------------*/
@@ -458,6 +507,34 @@ describe("get gh3 stargazers", function() {
 
         runs(function () {
             expect(stargazers.length).toBeGreaterThan(10);
+        });
+
+    });
+
+});
+
+describe("Fetch events related to a repository", function() {
+    var k33g = new Gh3.User("k33g")
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g)
+    ,   events = [];
+
+    it("should have many events", function () {
+
+        runs(function () {
+
+            gh3Repo.fetchEvents(function (err, res) {
+                if(err) { throw "outch ..."; }
+                events = res.events;
+            }, "asynchronous method: fetchEvents");
+
+        });
+
+        waitsFor(function() {
+            return events.length > 0;
+        }, "...", 1000);
+
+        runs(function() {
+            expect(gh3Repo.events.length).toBeGreaterThan(10);
         });
 
     });
