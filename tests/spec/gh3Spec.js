@@ -92,6 +92,55 @@ describe("Fetch orgs and members of a gitHub user", function() {
 
 });
 
+describe("Fetch following and followers of a github user", function() {
+    var k33g = new Gh3.User("k33g")
+    ,   followers = []
+    ,   following = [];
+
+    it("should have many followers", function () {
+
+        runs(function () {
+
+            k33g.fetchFollowers(function (err, res) {
+                if(err) { throw "outch ..."; }
+                followers = res.followers;
+            }, "asynchronous method: fetchFollowers");
+
+        });
+
+        waitsFor(function() {
+            return followers.length > 0;
+        }, "...", 1000);
+
+        runs(function() {
+            expect(k33g.followers.length).toBeGreaterThan(10);
+        });
+
+    });
+
+    it("should have many following", function () {
+
+        runs(function () {
+
+            k33g.fetchFollowing(function (err, res) {
+                if(err) { throw "outch ..."; }
+                following = res.following;
+            }, "asynchronous method: fetchFollowing");
+
+        });
+
+        waitsFor(function() {
+            return following.length > 0;
+        }, "...", 1000);
+
+        runs(function() {
+            expect(k33g.following.length).toBeGreaterThan(10);
+        });
+
+    });
+
+});
+
 /*-----------------------------
     Users
 -----------------------------*/

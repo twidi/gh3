@@ -395,8 +395,97 @@
             });
 
         },
-        getMembers : function () { return this.members; }
+        getMembers : function () { return this.members; },
+        fetchFollowers : function (callback) {
+            var that = this;
+            that.followers = [];
 
+            Gh3.Helper.callHttpApi({
+                service : "users/"+that.login+"/followers",
+                success : function(res) {
+                    _.each(res.data, function (follower) {
+                        that.followers.push(new Gh3.User(follower.login, follower));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getFollowers : function () { return this.followers; },
+        getFollowerByName : function (name) {
+            return _.find(this.followers, function (follower) {
+                return follower.name == name;
+            });
+        },
+        getFollowerByLogin : function (login) {
+            return _.find(this.followers, function (follower) {
+                return follower.login == login;
+            });
+        },
+        eachFollower : function (callback) {
+            _.each(this.followers, function (follower) {
+                callback(follower);
+            });
+        },
+        reverseFollowers : function () {
+            this.followers.reverse();
+        },
+        sortFollowers : function (comparison_func) {
+            if (comparison_func) {
+                this.followers.sort(comparison_func);
+            } else {
+                this.followers.sort();
+            }
+        },
+        fetchFollowing : function (callback) {
+            var that = this;
+            that.following = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "users/"+that.login+"/following",
+                success : function(res) {
+                    _.each(res.data, function (following) {
+                        that.following.push(new Gh3.User(following.login, following));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getFollowing : function () { return this.following; },
+        getFollowingByName : function (name) {
+            return _.find(this.following, function (following) {
+                return following.name == name;
+            });
+        },
+        getFollowingByLogin : function (login) {
+            return _.find(this.following, function (following) {
+                return following.login == login;
+            });
+        },
+        eachFollowing : function (callback) {
+            _.each(this.following, function (following) {
+                callback(following);
+            });
+        },
+        reverseFollowing : function () {
+            this.following.reverse();
+        },
+        sortFollowing : function (comparison_func) {
+            if (comparison_func) {
+                this.following.sort(comparison_func);
+            } else {
+                this.following.sort();
+            }
+        }
 
     },{});
 
