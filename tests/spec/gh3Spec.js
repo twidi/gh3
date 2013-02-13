@@ -295,6 +295,39 @@ describe("get gh3 readme", function() {
 
 });
 
+describe("get gh3 contributors", function() {
+
+    var k33g = new Gh3.User("k33g")
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g)
+    ,   contributors = [];
+
+    it("should have a 3 contributors, including k33g, with number of contributions", function () {
+
+        runs(function () {
+
+            gh3Repo.fetchContributors(function (err, res) {
+                if(err) { throw "outch ..."; }
+                contributors = res.getContributors();
+                console.log(gh3Repo);
+            });
+
+        }, "asynchronous method : fetchContributors()");
+
+        waitsFor(function () {
+            return contributors.length > 0;
+        }, "...", 1000);
+
+        runs(function () {
+            var k33g_ = gh3Repo.getContributorByLogin('k33g');
+            expect(contributors.length).toBeGreaterThan(1);
+            expect(k33g_.login).toEqual('k33g');
+            expect(k33g_.contributions).toBeGreaterThan(20);
+        });
+
+    });
+
+});
+
 
 /*-----------------------------
     Branch, File & Directory

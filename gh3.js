@@ -307,6 +307,11 @@
                 return item.name == name;
             });
         },
+        getByLogin : function (login) {
+            return _.find(Gh3.Users.users, function (item) {
+                return item.login == login;
+            });
+        },
         each : function (callback) {
             _.each(Gh3.Users.users, function (user) {
                 callback(user);
@@ -825,6 +830,51 @@
                     if (callback) { callback(new Error(res)); }
                 }
             });
+        },
+        fetchContributors : function (callback) {
+            var that = this;
+            that.contributors = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "repos/"+that.user.login+"/"+that.name+"/contributors",
+                success : function(res) {
+                    _.each(res.data, function (contributor) {
+                        that.contributors.push(new Gh3.User(contributor.login, contributor));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getContributors : function () { return this.contributors; },
+        getContributorByName : function (name) {
+            return _.find(this.contributors, function (contributor) {
+                return contributor.name == name;
+            });
+        },
+        getContributorByLogin : function (login) {
+            return _.find(this.contributors, function (contributor) {
+                return contributor.login == login;
+            });
+        },
+        eachContributor : function (callback) {
+            _.each(this.contributors, function (contributor) {
+                callback(contributor);
+            });
+        },
+        reverseContributors : function () {
+            this.contributors.reverse();
+        },
+        sortContributors : function (comparison_func) {
+            if (comparison_func) {
+                this.contributors.sort(comparison_func);
+            } else {
+                this.contributors.sort();
+            }
         }
 
     },{});
