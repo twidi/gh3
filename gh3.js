@@ -350,7 +350,47 @@
                 }
             });
 
-        }
+        },
+        fetchOrgs : function (callback) {
+            var that = this;
+            that.orgs = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "users/"+that.login+"/orgs",
+                success : function(res) {
+                    _.each(res.data, function (org) {
+                        that.orgs.push(new Gh3.User(org.login, org));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getOrgs : function () { return this.orgs; },
+        fetchMembers : function (callback) {
+            var that = this;
+            that.members = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "orgs/"+that.login+"/members",
+                success : function(res) {
+                    _.each(res.data, function (user) {
+                        that.members.push(new Gh3.User(user.login, user));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getMembers : function () { return this.members; }
 
 
     },{});

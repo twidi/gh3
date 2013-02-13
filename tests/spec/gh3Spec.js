@@ -44,6 +44,54 @@ describe("Fetch data of a gitHub user : k33g", function () {
 
 });
 
+describe("Fetch orgs and members of a gitHub user", function() {
+    var github = new Gh3.User("github")
+    ,   defunkt = new Gh3.User("defunkt")
+    ,   members = []
+    ,   orgs = [];
+
+    it("org github should have more that 10 members", function() {
+        runs(function () {
+
+            github.fetchMembers(function (err, res){
+                if(err) { throw "outch ..."; }
+                members = res.members;
+            });
+
+        }, "asynchronous method: fetchMembers");
+
+        waitsFor(function () {
+            return members.length > 0;
+        }, "...", 1000);
+
+        runs(function() {
+            expect(github.members.length).toBeGreaterThan(20);
+            expect(members.length).toBeGreaterThan(20);
+        });
+    });
+
+    it("user defunkt should have at least one org", function() {
+        runs(function () {
+
+            defunkt.fetchOrgs(function (err, res){
+                if(err) { throw "outch ..."; }
+                orgs = res.orgs;
+            });
+
+        }, "asynchronous method: fetchOrgs");
+
+        waitsFor(function () {
+            return orgs.length > 0;
+        }, "...", 1000);
+
+        runs(function() {
+            expect(defunkt.orgs.length).toBeGreaterThan(1);
+            expect(orgs.length).toBeGreaterThan(1);
+        });
+    });
+
+});
+
 /*-----------------------------
     Users
 -----------------------------*/
