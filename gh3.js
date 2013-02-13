@@ -916,6 +916,51 @@
             } else {
                 this.forks.sort();
             }
+        },
+        fetchStargazers : function (callback) {
+            var that = this;
+            that.stargazers = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "repos/"+that.user.login+"/"+that.name+"/stargazers",
+                success : function(res) {
+                    _.each(res.data, function (stargazer) {
+                        that.stargazers.push(new Gh3.User(stargazer.login, stargazer));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getStargazers : function () { return this.stargazers; },
+        getStargazerByName : function (name) {
+            return _.find(this.stargazers, function (stargazer) {
+                return stargazer.name == name;
+            });
+        },
+        getStargazerByLogin : function (login) {
+            return _.find(this.stargazers, function (stargazer) {
+                return stargazer.login == login;
+            });
+        },
+        eachStargazer : function (callback) {
+            _.each(this.stargazers, function (stargazer) {
+                callback(stargazer);
+            });
+        },
+        reverseStargazers : function () {
+            this.stargazers.reverse();
+        },
+        sortStargazers : function (comparison_func) {
+            if (comparison_func) {
+                this.stargazers.sort(comparison_func);
+            } else {
+                this.stargazers.sort();
+            }
         }
 
     },{});

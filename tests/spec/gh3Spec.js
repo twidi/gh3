@@ -358,6 +358,36 @@ describe("get gh3 forks", function() {
 
 });
 
+describe("get gh3 stargazers", function() {
+
+    var k33g = new Gh3.User("k33g")
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g)
+    ,   stargazers = [];
+
+    it("should have some stargazers", function () {
+
+        runs(function () {
+
+            gh3Repo.fetchStargazers(function (err, res) {
+                if(err) { throw "outch ..."; }
+                stargazers = res.getStargazers();
+                console.log(gh3Repo);
+            });
+
+        }, "asynchronous method : fetchStargazers()");
+
+        waitsFor(function () {
+            return stargazers.length > 0;
+        }, "...", 1000);
+
+        runs(function () {
+            expect(stargazers.length).toBeGreaterThan(10);
+        });
+
+    });
+
+});
+
 
 /*-----------------------------
     Branch, File & Directory
