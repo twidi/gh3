@@ -301,7 +301,7 @@ describe("get gh3 contributors", function() {
     ,   gh3Repo = new Gh3.Repository("gh3", k33g)
     ,   contributors = [];
 
-    it("should have a 3 contributors, including k33g, with number of contributions", function () {
+    it("should have some contributors, including k33g, with number of contributions", function () {
 
         runs(function () {
 
@@ -322,6 +322,36 @@ describe("get gh3 contributors", function() {
             expect(contributors.length).toBeGreaterThan(1);
             expect(k33g_.login).toEqual('k33g');
             expect(k33g_.contributions).toBeGreaterThan(20);
+        });
+
+    });
+
+});
+
+describe("get gh3 forks", function() {
+
+    var k33g = new Gh3.User("k33g")
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g)
+    ,   forks = [];
+
+    it("should have some forks", function () {
+
+        runs(function () {
+
+            gh3Repo.fetchForks(function (err, res) {
+                if(err) { throw "outch ..."; }
+                forks = res.getForks();
+                console.log(gh3Repo);
+            });
+
+        }, "asynchronous method : fetchForks()");
+
+        waitsFor(function () {
+            return forks.length > 0;
+        }, "...", 1000);
+
+        runs(function () {
+            expect(forks.length).toBeGreaterThan(0);
         });
 
     });

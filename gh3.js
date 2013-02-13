@@ -875,6 +875,47 @@
             } else {
                 this.contributors.sort();
             }
+        },
+        fetchForks : function (callback) {
+            var that = this;
+            that.forks = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "repos/"+that.user.login+"/"+that.name+"/forks",
+                success : function(res) {
+                    _.each(res.data, function (fork) {
+                        var owner = new Gh3.User(fork.owner.login, fork.owner);
+                        that.forks.push(new Gh3.Repository(fork.name, owner, fork));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getForks : function () { return this.forks; },
+        getForkByName : function (name) {
+            return _.find(this.forks, function (fork) {
+                return fork.name == name;
+            });
+        },
+        eachFork : function (callback) {
+            _.each(this.forks, function (fork) {
+                callback(fork);
+            });
+        },
+        reverseForks : function () {
+            this.forks.reverse();
+        },
+        sortForks : function (comparison_func) {
+            if (comparison_func) {
+                this.forks.sort(comparison_func);
+            } else {
+                this.forks.sort();
+            }
         }
 
     },{});
