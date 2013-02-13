@@ -485,6 +485,47 @@
             } else {
                 this.following.sort();
             }
+        },
+        fetchStarred : function (callback) {
+            var that = this;
+            that.starred = [];
+
+            Gh3.Helper.callHttpApi({
+                service : "users/"+that.login+"/starred",
+                success : function(res) {
+                    _.each(res.data, function (starred) {
+                        var owner = new Gh3.User(starred.owner.login, starred.owner);
+                        that.starred.push(new Gh3.Repository(starred.name, owner, starred));
+                    });
+
+                    if (callback) { callback(null, that); }
+                },
+                error : function (res) {
+                    if (callback) { callback(new Error(res)); }
+                }
+            });
+
+        },
+        getStarred : function () { return this.starred; },
+        getStarredByName : function (name) {
+            return _.find(this.starred, function (starred) {
+                return starred.name == name;
+            });
+        },
+        eachStarred : function (callback) {
+            _.each(this.starred, function (starred) {
+                callback(starred);
+            });
+        },
+        reverseStarred : function () {
+            this.starred.reverse();
+        },
+        sortStarred : function (comparison_func) {
+            if (comparison_func) {
+                this.starred.sort(comparison_func);
+            } else {
+                this.starred.sort();
+            }
         }
 
     },{});

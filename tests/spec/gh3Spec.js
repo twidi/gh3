@@ -44,7 +44,7 @@ describe("Fetch data of a gitHub user : k33g", function () {
 
 });
 
-describe("Fetch orgs and members of a gitHub user", function() {
+describe("Fetch orgs and members of a gitHub user/organisation", function() {
     var github = new Gh3.User("github")
     ,   defunkt = new Gh3.User("defunkt")
     ,   members = []
@@ -135,6 +135,33 @@ describe("Fetch following and followers of a github user", function() {
 
         runs(function() {
             expect(k33g.following.length).toBeGreaterThan(10);
+        });
+
+    });
+
+});
+
+describe("Fetch starred repositories of a github user", function() {
+    var k33g = new Gh3.User("k33g")
+    ,   starred = [];
+
+    it("should have many starred repositories", function () {
+
+        runs(function () {
+
+            k33g.fetchStarred(function (err, res) {
+                if(err) { throw "outch ..."; }
+                starred = res.starred;
+            }, "asynchronous method: fetchStarred");
+
+        });
+
+        waitsFor(function() {
+            return starred.length > 0;
+        }, "...", 1000);
+
+        runs(function() {
+            expect(k33g.starred.length).toBeGreaterThan(10);
         });
 
     });
