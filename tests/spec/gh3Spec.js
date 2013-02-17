@@ -46,74 +46,65 @@ describe("Fetch data of a gitHub user : k33g", function () {
 
 describe("Fetch orgs and members of a gitHub user/organisation", function() {
     var github = new Gh3.User("github")
-    ,   defunkt = new Gh3.User("defunkt")
-    ,   members = []
-    ,   orgs = [];
+    ,   defunkt = new Gh3.User("defunkt");
 
     it("org github should have more that 10 members", function() {
         runs(function () {
 
-            github.fetchMembers(function (err, res){
+            github.members.fetch(function (err, res){
                 if(err) { throw "outch ..."; }
-                members = res.members;
             });
 
-        }, "asynchronous method: fetchMembers");
+        }, "asynchronous method: members.fetch");
 
         waitsFor(function () {
-            return members.length > 0;
+            return github.members.fetched;
         }, "...", 1000);
 
         runs(function() {
-            expect(github.members.length).toBeGreaterThan(20);
-            expect(members.length).toBeGreaterThan(20);
+            expect(github.members.length()).toBeGreaterThan(20);
         });
     });
 
     it("user defunkt should have at least one org", function() {
         runs(function () {
 
-            defunkt.fetchOrgs(function (err, res){
+            defunkt.orgs.fetch(function (err, res){
                 if(err) { throw "outch ..."; }
-                orgs = res.orgs;
             });
 
-        }, "asynchronous method: fetchOrgs");
+        }, "asynchronous method: orgs.fetch");
 
         waitsFor(function () {
-            return orgs.length > 0;
+            return defunkt.orgs.fetched;
         }, "...", 1000);
 
         runs(function() {
-            expect(defunkt.orgs.length).toBeGreaterThan(1);
-            expect(orgs.length).toBeGreaterThan(1);
+            expect(defunkt.orgs.length()).toBeGreaterThan(1);
         });
     });
 
 });
 
 describe("Fetch following and followers of a github user", function() {
-    var k33g = new Gh3.User("k33g")
-    ,   followers = []
-    ,   following = [];
+    var k33g = new Gh3.User("k33g");
 
     it("should have many followers", function () {
 
         runs(function () {
 
-            k33g.fetchFollowers(function (err, res) {
+            k33g.followers.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                followers = res.followers;
-            }, "asynchronous method: fetchFollowers");
+            });
 
-        });
+        }, "asynchronous method: followers.fetch");
 
         waitsFor(function() {
-            return followers.length > 0;
+            return k33g.followers.fetched;
         }, "...", 1000);
 
         runs(function() {
-            expect(k33g.followers.length).toBeGreaterThan(10);
+            expect(k33g.followers.length()).toBeGreaterThan(10);
         });
 
     });
@@ -122,19 +113,19 @@ describe("Fetch following and followers of a github user", function() {
 
         runs(function () {
 
-            k33g.fetchFollowing(function (err, res) {
+            k33g.following.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                following = res.following;
-            }, "asynchronous method: fetchFollowing");
+            });
 
-        });
+        }, "asynchronous method: following.fetch");
+
 
         waitsFor(function() {
-            return following.length > 0;
+            return k33g.following.fetched;
         }, "...", 1000);
 
         runs(function() {
-            expect(k33g.following.length).toBeGreaterThan(10);
+            expect(k33g.following.length()).toBeGreaterThan(10);
         });
 
     });
@@ -142,26 +133,25 @@ describe("Fetch following and followers of a github user", function() {
 });
 
 describe("Fetch starred repositories of a github user", function() {
-    var k33g = new Gh3.User("k33g")
-    ,   starred = [];
+    var k33g = new Gh3.User("k33g");
 
     it("should have many starred repositories", function () {
 
         runs(function () {
 
-            k33g.fetchStarred(function (err, res) {
+            k33g.starred.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                starred = res.starred;
-            }, "asynchronous method: fetchStarred");
+            });
 
-        });
+        }, "asynchronous method: starred.fetch");
+
 
         waitsFor(function() {
-            return starred.length > 0;
+            return k33g.starred.fetched;
         }, "...", 1000);
 
         runs(function() {
-            expect(k33g.starred.length).toBeGreaterThan(10);
+            expect(k33g.starred.length()).toBeGreaterThan(10);
         });
 
     });
@@ -169,27 +159,25 @@ describe("Fetch starred repositories of a github user", function() {
 });
 
 describe("Fetch events emited and received by github user", function() {
-    var k33g = new Gh3.User("k33g")
-    ,   events = []
-    ,   received_events = [];
+    var k33g = new Gh3.User("k33g");
 
     it("should have emited many events", function () {
 
         runs(function () {
 
-            k33g.fetchEvents(function (err, res) {
+            k33g.events.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                events = res.events;
-            }, "asynchronous method: fetchEvents");
+            });
 
-        });
+        }, "asynchronous method: events.fetch");
+
 
         waitsFor(function() {
-            return events.length > 0;
+            return k33g.events.fetched;
         }, "...", 1000);
 
         runs(function() {
-            expect(k33g.events.length).toBeGreaterThan(10);
+            expect(k33g.events.length()).toBeGreaterThan(10);
         });
 
     });
@@ -198,19 +186,19 @@ describe("Fetch events emited and received by github user", function() {
 
         runs(function () {
 
-            k33g.fetchReceivedEvents(function (err, res) {
+            k33g.received_events.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                received_events = res.received_events;
-            }, "asynchronous method: fetchReceivedEvents");
+            });
 
-        });
+        }, "asynchronous method: received_events.fetch");
+
 
         waitsFor(function() {
-            return received_events.length > 0;
+            return k33g.received_events.fetched;
         }, "...", 1000);
 
         runs(function() {
-            expect(k33g.received_events.length).toBeGreaterThan(10);
+            expect(k33g.received_events.length()).toBeGreaterThan(10);
         });
 
     });
@@ -297,27 +285,23 @@ describe("Search users by keyword mad", function() {
 -----------------------------*/
 
 describe("Fetch data of repositories of a gitHub user : k33g", function () {
-    var k33g = new  Gh3.User("k33g")
-    ,    k33gRepositories = new Gh3.Repositories(k33g);
+    var k33g = new  Gh3.User("k33g");
 
     it("should have more than 20 public repositories", function () {
         runs(function () {
 
-            k33gRepositories.fetch({page:1, per_page:100, direction : "desc"},"next", function (err, res) {
+            k33g.repositories.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                console.log("Repositories", k33gRepositories);
-                console.log("TOTAL : ", k33gRepositories.getRepositories().length);
-            });
+            }, {page:1, per_page:100, direction : "desc"});
 
-
-        }, "asynchronous method : fetch()");
+        }, "asynchronous method : repositories.fetch");
 
         waitsFor(function () {
-            return k33gRepositories.getRepositories().length > 20;
+            return k33g.repositories.fetched;
         }, "...", 1000);
 
         runs(function () {
-            expect(k33gRepositories.getRepositories().length).toBeGreaterThan(20);
+            expect(k33g.repositories.length()).toBeGreaterThan(20);
         });
 
     });
@@ -423,28 +407,25 @@ describe("get gh3 readme", function() {
 describe("get gh3 contributors", function() {
 
     var k33g = new Gh3.User("k33g")
-    ,   gh3Repo = new Gh3.Repository("gh3", k33g)
-    ,   contributors = [];
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g);
 
     it("should have some contributors, including k33g, with number of contributions", function () {
 
         runs(function () {
 
-            gh3Repo.fetchContributors(function (err, res) {
+            gh3Repo.contributors.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                contributors = res.getContributors();
-                console.log(gh3Repo);
             });
 
-        }, "asynchronous method : fetchContributors()");
+        }, "asynchronous method : contributors.fetch()");
 
         waitsFor(function () {
-            return contributors.length > 0;
+            return gh3Repo.contributors.fetched;
         }, "...", 1000);
 
         runs(function () {
-            var k33g_ = gh3Repo.getContributorByLogin('k33g');
-            expect(contributors.length).toBeGreaterThan(1);
+            var k33g_ = gh3Repo.contributors.getByLogin('k33g');
+            expect(gh3Repo.contributors.length()).toBeGreaterThan(1);
             expect(k33g_.login).toEqual('k33g');
             expect(k33g_.contributions).toBeGreaterThan(20);
         });
@@ -456,27 +437,25 @@ describe("get gh3 contributors", function() {
 describe("get gh3 forks", function() {
 
     var k33g = new Gh3.User("k33g")
-    ,   gh3Repo = new Gh3.Repository("gh3", k33g)
-    ,   forks = [];
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g);
 
     it("should have some forks", function () {
 
         runs(function () {
 
-            gh3Repo.fetchForks(function (err, res) {
+            gh3Repo.forks.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                forks = res.getForks();
                 console.log(gh3Repo);
             });
 
-        }, "asynchronous method : fetchForks()");
+        }, "asynchronous method : forks.fetch()");
 
         waitsFor(function () {
-            return forks.length > 0;
+            return gh3Repo.forks.fetched;
         }, "...", 1000);
 
         runs(function () {
-            expect(forks.length).toBeGreaterThan(0);
+            expect(gh3Repo.forks.length()).toBeGreaterThan(0);
         });
 
     });
@@ -486,27 +465,25 @@ describe("get gh3 forks", function() {
 describe("get gh3 stargazers", function() {
 
     var k33g = new Gh3.User("k33g")
-    ,   gh3Repo = new Gh3.Repository("gh3", k33g)
-    ,   stargazers = [];
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g);
 
     it("should have some stargazers", function () {
 
         runs(function () {
 
-            gh3Repo.fetchStargazers(function (err, res) {
+            gh3Repo.stargazers.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                stargazers = res.getStargazers();
                 console.log(gh3Repo);
             });
 
-        }, "asynchronous method : fetchStargazers()");
+        }, "asynchronous method : stargazers.fetch()");
 
         waitsFor(function () {
-            return stargazers.length > 0;
+            return gh3Repo.stargazers.fetched;
         }, "...", 1000);
 
         runs(function () {
-            expect(stargazers.length).toBeGreaterThan(10);
+            expect(gh3Repo.stargazers.length()).toBeGreaterThan(10);
         });
 
     });
@@ -515,26 +492,25 @@ describe("get gh3 stargazers", function() {
 
 describe("Fetch events related to a repository", function() {
     var k33g = new Gh3.User("k33g")
-    ,   gh3Repo = new Gh3.Repository("gh3", k33g)
-    ,   events = [];
+    ,   gh3Repo = new Gh3.Repository("gh3", k33g);
 
     it("should have many events", function () {
 
         runs(function () {
 
-            gh3Repo.fetchEvents(function (err, res) {
+            gh3Repo.events.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
-                events = res.events;
-            }, "asynchronous method: fetchEvents");
+            });
 
-        });
+        }, "asynchronous method: events.fetch");
+
 
         waitsFor(function() {
-            return events.length > 0;
+            return gh3Repo.events.fetched;
         }, "...", 1000);
 
         runs(function() {
-            expect(gh3Repo.events.length).toBeGreaterThan(10);
+            expect(gh3Repo.events.length()).toBeGreaterThan(10);
         });
 
     });
@@ -552,7 +528,7 @@ describe("get master branch of k33g.github.com repository", function () {
     var k33g = new Gh3.User("k33g")
     ,    k33gBlog = new Gh3.Repository("k33g.github.com", k33g)
     ,    numberOfContents = 0
-    ,     master;
+    ,    master;
 
     it("should have several contents", function () {
 
@@ -562,24 +538,24 @@ describe("get master branch of k33g.github.com repository", function () {
                 if(err) { throw "outch ..."; }
 
                 console.log("k33gBlog : ", k33gBlog);
-                k33gBlog.fetchBranches(function (err, res) {
+                k33gBlog.branches.fetch(function (err, res) {
                     if(err) { throw "outch ..."; }
 
-                    master = k33gBlog.getBranchByName("master");
+                    master = k33gBlog.branches.getByName("master");
 
                     console.log("master : ", master);
 
-                    master.fetchContents(function (err, res) {
+                    master.contents.fetch(function (err, res) {
                         if(err) { throw "outch ..."; }
 
-                        console.log(master.getContents());
-                        numberOfContents = master.getContents().length;
+                        console.log(master.contents.getAll());
+                        numberOfContents = master.contents.length();
                     });
 
                 });
             });
 
-        }, "asynchronous method : fetchContents()");
+        }, "asynchronous method : contents.fetch()");
 
         waitsFor(function () {
             return numberOfContents > 0;
@@ -612,25 +588,25 @@ describe("when contents of master branch are fetched", function () {
             k33gBlog.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
 
-                k33gBlog.fetchBranches(function (err, res) {
+                k33gBlog.branches.fetch(function (err, res) {
                     if(err) { throw "outch ..."; }
 
-                    master = k33gBlog.getBranchByName("master");
+                    master = k33gBlog.branches.getByName("master");
 
-                    master.fetchContents(function (err, res) {
+                    master.contents.fetch(function (err, res) {
                         if(err) { throw "outch ..."; }
-                        myfile = master.getFileByName("index.html");
+                        myfile = master.contents.getFileByName("index.html");
 
-                        myfile.fetchContent(function (err, res) {
+                        myfile.fetch(function (err, res) {
                             if(err) { throw "outch ..."; }
-                            rawContent = myfile.getRawContent();
+                            rawContent = myfile.content;
                         });
                     });
 
                 });
             });
 
-        }, "asynchronous method : fetchContents()");
+        }, "asynchronous method : contents.fetch()");
 
         waitsFor(function () {
             return rawContent.length > 0;
@@ -647,21 +623,21 @@ describe("when contents of master branch are fetched", function () {
         var numberOfCommits = 0;
 
         runs(function () {
-            myfile.fetchCommits(function (err, res) {
+            myfile.commits.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
 
-                console.log(myfile.getCommits());
+                console.log(myfile.commits.getAll());
 
-                myfile.eachCommit(function (commit) {
+                myfile.commits.each(function (commit) {
                     console.log(commit.author.login, commit.message, commit.date);
                     numberOfCommits ++;
                 });
             });
-        }, "asynchronous method : fetchCommits()");
+        }, "asynchronous method : commits.fetch()");
 
         waitsFor(function () {
             return numberOfCommits > 0;
-        }, "...", 1000);
+        }, "...", 2000);
 
         runs(function () {
             expect(numberOfCommits).toBeGreaterThan(0);
@@ -673,20 +649,20 @@ describe("when contents of master branch are fetched", function () {
         var numberOfContentsInDirectory = 0;
 
         runs(function () {
-            dir = master.getDirByName('_posts');
+            dir = master.contents.getDirByName('_posts');
 
-            dir.fetchContents(function (err, res) {
+            dir.contents.fetch(function (err, res) {
                 if(err) { throw "outch ..."; }
 
-                console.log(dir.getContents());
+                console.log(dir.contents.getAll());
 
-                dir.eachContent(function (content) {
+                dir.contents.each(function (content) {
                     console.log(content.name, content.type, content.size);
                     numberOfContentsInDirectory ++;
                 });
             });
 
-        },"asynchronous method : fetchContents()");
+        },"asynchronous method : contents.fetch()");
 
         waitsFor(function () {
             return numberOfContentsInDirectory > 0;
@@ -704,24 +680,24 @@ describe("when contents of master branch are fetched", function () {
 -----------------------------*/
 
 describe("Get some gists of k33g", function () {
-    var GistsOfK33g = new Gh3.Gists(new Gh3.User("k33g"))
+    var k33g = new Gh3.User("k33g")
     , numberOfFoundGists = 0;
 
 
-    it("should have more than 3 gists on page next to page 2", function () {
+    it("should have more than 3 gists on page 2", function () {
 
         runs(function () {
-            GistsOfK33g.fetch({page:2, per_page:5}, "next", function (err, res) {
+            k33g.gists.fetch(function (err, res) {
 
                 if(err) { throw "outch ..."; }
 
-                console.log(GistsOfK33g.getGists());
+                console.log(k33g.gists.getAll());
 
-                GistsOfK33g.eachGist(function (gist) {
+                k33g.gists.each(function (gist) {
                     //console.log(gist.description, gist.id);
                     numberOfFoundGists ++;
                 });
-            });
+            }, {page:2, per_page:5});
 
         },"asynchronous method : fetch()");
 
@@ -748,20 +724,20 @@ describe("Get gist where id = 1096826", function () {
 
         runs(function () {
 
-            aGist.fetchContents(function (err, res) {
+            aGist.fetch(function (err, res) {
 
                 if(err) { throw "outch ..."; }
 
                 console.log("aGist : ", aGist);
                 console.log("Files : ", aGist.files);
 
-                aGist.eachFile(function (file) {
+                aGist.files.each(function (file) {
                     console.log(file.filename, file.language, file.type, file.size);
                     numberOfFiles ++;
                 });
 
             });
-        },"asynchronous method : fetchContents()");
+        },"asynchronous method : fetch()");
 
         waitsFor(function () {
             return numberOfFiles > 0;
@@ -769,6 +745,7 @@ describe("Get gist where id = 1096826", function () {
 
         runs(function () {
             expect(numberOfFiles).toBeGreaterThan(0);
+            expect(numberOfFiles).toEqual(aGist.files.length());
         });
 
     });
@@ -776,17 +753,17 @@ describe("Get gist where id = 1096826", function () {
     it("should have some comments", function () {
 
         runs(function () {
-            aGist.fetchComments(function (err, res) {
+            aGist.comments.fetch(function (err, res) {
 
                 if(err) { throw "outch ..."; }
 
-                aGist.eachComment(function (comment) {
+                aGist.comments.each(function (comment) {
                     console.log(comment.body, "By ", comment.user.login);
                     numberOfComments ++;
                 });
             });
 
-        },"asynchronous method : fetchComments()");
+        },"asynchronous method : comments.fetch()");
 
         waitsFor(function () {
             return numberOfComments > 0;
@@ -794,6 +771,10 @@ describe("Get gist where id = 1096826", function () {
 
         runs(function () {
             expect(numberOfComments).toBeGreaterThan(0);
+            if (typeof aGist.comment_count != 'undefined') {
+                expect(numberOfComments).toEqual(aGist.comment_count);
+            }
+            expect(numberOfComments).toEqual(aGist.comments.length());
         });
 
     });
