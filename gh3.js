@@ -235,7 +235,7 @@
 
     Gh3.Base64 = root.Base64;
 
-    if (window.XDomainReques) {
+    if (window.XDomainRequest) {
         try {
             new XDomainRequest();
             $.support.cors = true;
