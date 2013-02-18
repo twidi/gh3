@@ -641,16 +641,19 @@
         /* This class represent a Github Gist
          */
         // TODO: manage history
-        constructor : function (gistData, ghUser, ghParent) {
+        constructor : function (gistData, ghUser, ghParent, version) {
             /* The constructor define two lists, to hold files and comments,
              * then call the super constructor to save given data with _setData
              */
 
             this.user = ghUser || null;
             this.parent = ghParent || null;
+            this.version = version || null;
+
             this.files = new Collection.GistFiles(this);
             this.comments = new Collection.GistComments(this);
             this.forks = new Collection.GistForks(this);
+            this.history = new Collection.GistHistory(this);
 
             Gh3.Gist.__super__.constructor.call(this, gistData);
         },
@@ -658,6 +661,7 @@
             /* Extract files from data to save them in the files list. Also
              * rename the "comments" field into "comment_count" to not override
              * the comments list.
+             * Save also forks, parent and history
              * And call the super _setData to save normal fields
              */
             if (data.user) {
@@ -676,6 +680,14 @@
                 this.parent._setData(data.fork_of);
                 delete data.fork_of;
             }
+            if (data.forks) {
+                this.history._setItems(data.forks);
+                delete data.forks;
+            }
+            if (data.history) {
+                this.history._setItems(data.history);
+                delete data.history;
+            }
 
             data.comment_count = data.comments;
             delete data.comments;
@@ -683,8 +695,15 @@
             Gh3.Gist.__super__._setData.call(this, data);
 
         }, // _setData
-        _service: function() {
+        _baseService: function() {
             return "gists/" + this.id;
+        },
+        _service: function() {
+            var service = this._baseService();
+            if (this.version) {
+                service += "/" + this.version;
+            }
+            return service;
         }
     }); // Gh3.Gist
 
@@ -699,7 +718,7 @@
             Gh3.GistComment.__super__.constructor.call(this, gistCommentData);
         },
         _service: function() {
-            return this.gist._service() + "/comments/" + this.id;
+            return this.gist._baseService() + "/comments/" + this.id;
         },
         _setData: function(data) {
             /* Save the commenter as a Gh3.User
@@ -724,7 +743,7 @@
             return new Gh3.GistComment(item, this.parent);
         },
         _service: function() {
-            return this.parent._service() + "/comments";
+            return this.parent._baseService() + "/comments";
         }
     }); // Collection.GistComments
 
@@ -741,7 +760,7 @@
             return new Gh3.Gist(item, user, this.parent);
         },
         _service: function() {
-            return this.parent._service() + "/forks";
+            return this.parent._baseService() + "/forks";
         }
 
     });
@@ -788,6 +807,26 @@
             return this.getBy('filename', name);
         }
     }); // Collection.GistFiles
+
+    Gh3.GistVersion = SingleObject.extend({
+        /* This class represent a version of a Github file.
+         * A version is linked to two gists: the main gist, and the versionned one
+         */
+        constructor: function(version, historyData, ghGist) {
+            this.parent = ghGist;
+            this.version = version;
+            this.gist = new Gh3.Gist({id: this.parent.id}, this.parent.user, null, this.version);
+            Gh3.GistVersion.__super__.constructor.call(this, historyData);
+        }
+    }); // Gh3.GistVersion
+
+    Collection.GistHistory = Collection._Base.extend({
+        /* A collection to hold the list of all versions of a gist
+         */
+        _prepareItem: function(item) {
+            return new Gh3.GistVersion(item.version, item, this.parent);
+        }
+    }); // Collection.GistHistory
 
 
     /* ItemContents: files and dirs */
