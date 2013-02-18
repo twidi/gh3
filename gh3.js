@@ -640,15 +640,17 @@
     Gh3.Gist = SingleObject.extend({
         /* This class represent a Github Gist
          */
-        // TODO: manage forks and history
-        constructor : function (gistData, ghUser) {
+        // TODO: manage history
+        constructor : function (gistData, ghUser, ghParent) {
             /* The constructor define two lists, to hold files and comments,
              * then call the super constructor to save given data with _setData
              */
 
             this.user = ghUser || null;
+            this.parent = ghParent || null;
             this.files = new Collection.GistFiles(this);
             this.comments = new Collection.GistComments(this);
+            this.forks = new Collection.GistForks(this);
 
             Gh3.Gist.__super__.constructor.call(this, gistData);
         },
@@ -666,6 +668,13 @@
             if (data.files) {
                 this.files._setItems(data.files);
                 delete data.files;
+            }
+            if (data.fork_of) {
+                if (!this.parent) {
+                    this.parent = new Gh3.Gist({id: data.fork_of.id}, new Gh3.User(data.fork_of.user.login, data.fork_of.user));
+                }
+                this.parent._setData(data.fork_of);
+                delete data.fork_of;
             }
 
             data.comment_count = data.comments;
@@ -718,6 +727,24 @@
             return this.parent._service() + "/comments";
         }
     }); // Collection.GistComments
+
+    Collection.GistForks = Collection._Base.extend({
+        /* A collection to hold the list of all forks of a gist
+         */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Gist with raw data from the api
+             */
+            var user;
+            if (item.user) {
+                user = new Gh3.User(item.user.login, item.user);
+            }
+            return new Gh3.Gist(item, user, this.parent);
+        },
+        _service: function() {
+            return this.parent._service() + "/forks";
+        }
+
+    });
 
     Collection.UserGists = Collection._Base.extend({
         /* A collection to hold the list of all gists of a user
