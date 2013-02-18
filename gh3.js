@@ -583,6 +583,8 @@
          * method.
          */
         _setData: function(data) {
+            /* Save the actor and repo, then normal fields
+             */
             if (data) {
                 if (data.actor) {
                     if (data.actor.id && data.actor.login) {
@@ -680,7 +682,6 @@
     Gh3.GistComment = SingleObject.extend({
         /* This class represent a Github gist comment, but does nothing specific
          */
-        // TODO: manage user as a Gh3.User
         constructor : function (gistCommentData, ghGist) {
             /* Save the parent gist then call the super constructor to save
              * given data with _setData
@@ -690,6 +691,18 @@
         },
         _service: function() {
             return this.gist._service() + "/comments/" + this.id;
+        },
+        _setData: function(data) {
+            /* Save the commenter as a Gh3.User
+             */
+            if (data.user) {
+               if (!this.user) {
+                   this.user = new Gh3.User(data.user.login);
+               }
+               this.user._setData(data.user);
+               delete data.user;
+            }
+            Gh3.GistComment.__super__._setData.call(this, data);
         }
     });
 
