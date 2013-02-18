@@ -582,7 +582,30 @@
          * As an event is not specifically fetchable, this object as no "_service"
          * method.
          */
-        // TODO: manage actor as Gh3.User, repo as Gh3.repository
+        _setData: function(data) {
+            if (data) {
+                if (data.actor) {
+                    if (data.actor.id && data.actor.login) {
+                        if (!this.actor) {
+                            this.actor = new Gh3.User(data.actor.login);
+                        }
+                        this.actor._setData(data.actor);
+                    }
+                    delete data.actor;
+                }
+                if (data.repo) {
+                    if (data.repo.id && data.repo.name) {
+                        if (!this.repository) {
+                            var parts = data.repo.name.split('/');
+                            this.repository = new Gh3.Repository(parts[1], new Gh3.User(parts[0]));
+                        }
+                        this.repository._setData(data.repo);
+                    }
+                    delete data.repo;
+                }
+            }
+            Gh3.Event.__super__._setData.call(this, data);
+        }
     });
     Collection._EventsList = Collection._Base.extend({
         /* Base class representing a collection of Gh3.Event objects
@@ -716,7 +739,6 @@
         _prepareItem: function(item) {
             /* Simply create a Gh3.GistComment with raw data from the api
              */
-            // TODO: pass the gist too ?
             return new Gh3.GistFile(item, this.parent);
         },
         getByName: function(name) {
