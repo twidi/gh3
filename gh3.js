@@ -1115,120 +1115,77 @@
     });
 
 
+    /* Search */
 
-
-
-
-
-
-
-    //TODO: Repositories for an organization
-
-    Gh3.Repositories = Kind.extend({//http://developer.github.com/v3/repos/
-
-    },{//static members
-        repositories : [],
-        search : function (keyword, pagesInfo, callback) {
-            Gh3.Repositories.repositories = [];
-            Gh3.Helper.callHttpApi({
-                service : "legacy/repos/search/"+keyword,
-                data : pagesInfo,
-                //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
-                success : function(res) {
-                    //console.log("*** : ", res);
-                    _.each(res.data.repositories, function (repository) {
-                        Gh3.Repositories.repositories.push(new Gh3.Repository(repository.name, new Gh3.User(repository.owner), repository));
-                        //owner & login : same thing ???
-                    });
-
-                    if (callback) { callback(null, Gh3.Repositories); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
+    Collection.Search = Collection._Base.extend({
+        /* Base collection to manage search. Accept a keyword as init argument
+         * but provides a search method to set the keywork and fetch data in a
+         * single call.
+         * Used by Gh3.Repository.Search and Gh3.User.Search.
+         */
+        constructor: function(keyword) {
+            /* Save the optional given keyword
+             */
+            this.keyword = keyword || null;
+            Collection.Search.__super__.constructor.call(this, null);
         },
-        reverse : function () {
-            Gh3.Repositories.repositories.reverse();
-        },
-        sort : function (comparison_func) {
-            if (comparison_func) {
-                Gh3.Repositories.repositories.sort(comparison_func);
-            } else {
-                Gh3.Repositories.repositories.sort();
-            }
-        },
-        getAll : function() { return Gh3.Repositories.repositories; },
-        getByName : function (name) {
-            return _.find(Gh3.Repositories.repositories, function (item) {
-                return item.name == name;
-            });
-        },
-        each : function (callback) {
-            _.each(Gh3.Repositories.repositories, function (repository) {
-                callback(repository);
-            });
-        },
-        filter : function (comparator) {
-            return _.filter(Gh3.Repositories.repositories, comparator);
+        search: function(keyword, callback, querystring_args) {
+            /* Simple method that reset the list, set the keyword to search and
+             * call the fetch method
+             */
+            this.list = [];
+            this.keyword = keyword;
+            this.fetch(callback, querystring_args);
         }
-    });
-    Gh3.Users = Kind.extend({
+    }); // Collection.Search
 
-    },{//static members
-        users : [],
-        search : function (keyword, pagesInfo, callback) {
-            Gh3.Users.users = [];
-            Gh3.Helper.callHttpApi({
-                service : "legacy/user/search/"+keyword,
-                data : pagesInfo,
-                //beforeSend: function (xhr) { xhr.setRequestHeader ("rel", paginationInfo); },
-                success : function(res) {
-                    _.each(res.data.users, function (user) {
-                        Gh3.Users.users.push(new Gh3.User(user.login, user));
-                    });
-
-                    if (callback) { callback(null, Gh3.Users); }
-                },
-                error : function (res) {
-                    if (callback) { callback(new Error(res)); }
-                }
-            });
-
+    Gh3.Repository.Search = Collection.Search.extend({
+        _service: function() {
+            return "legacy/repos/search/" + this.keyword;
         },
-        reverse : function () {
-            Gh3.Users.users.reverse();
+        _prepareItem: function(item) {
+            /* Create a Gh3.Repository with raw data from the api.
+             */
+            // Owner is not an object, we just have the login in the main object
+            var owner = new Gh3.User(item.owner);
+            delete item.owner;
+            delete item.username;
+            return new Gh3.Repository(item.name, owner, item);
         },
-        sort : function (comparison_func) {
-            if (comparison_func) {
-                Gh3.Users.users.sort(comparison_func);
-            } else {
-                Gh3.Users.users.sort();
-            }
-        },
-        getAll : function() { return Gh3.Users.users; },
-        getByName : function (name) {
-            return _.find(Gh3.Users.users, function (item) {
-                return item.name == name;
-            });
-        },
-        getByLogin : function (login) {
-            return _.find(Gh3.Users.users, function (item) {
-                return item.login == login;
-            });
-        },
-        each : function (callback) {
-            _.each(Gh3.Users.users, function (user) {
-                callback(user);
-            });
-        },
-        filter : function (comparator) {
-            return _.filter(Gh3.Users.users, comparator);
+        _onFetchSuccess: function(callback, result) {
+            /* Called when a fetch is successful to save the repositories from
+             * the result
+             */
+            this.fetched = true;
+            this._setItems(result.data.repositories);
+            if (callback) { callback(null, this); }
         }
+    }); // Collection.RepositorySearch
 
-    });
-
+    Gh3.User.Search = Collection.Search.extend({
+        _service: function() {
+            return "legacy/user/search/" + this.keyword;
+        },
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.User with raw data from the api
+             */
+            return new Gh3.User(item.login, item);
+        },
+        getByLogin: function(login) {
+            /* A wrapper arround getBy to quickly get an item based on its
+             * login
+             */
+            return this.getBy('login', login);
+        },
+        _onFetchSuccess: function(callback, result) {
+            /* Called when a fetch is successful to save the users from
+             * the result
+             */
+            this.fetched = true;
+            this._setItems(result.data.users);
+            if (callback) { callback(null, this); }
+        }
+    }); // Collection.UserSearch
 
 
 }).call(this);

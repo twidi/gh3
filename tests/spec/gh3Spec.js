@@ -210,28 +210,26 @@ describe("Fetch events emited and received by github user", function() {
 -----------------------------*/
 
 describe("Search users by keyword mad", function() {
-
+    var user_search = new Gh3.User.Search();
 
     it("should be more than 10 on first page", function () {
 
         var numberOfUsers = 0;
 
         runs(function () {
-            Gh3.Users.search("mad", {start_page : 1}, function (err, response) {
+            user_search.search("mad", function (err, response) {
                 if(err) { throw "outch ..."; }
-                //numberOfUsers = response.getAll().length;
-                //console.log(numberOfUsers);
                 response.each(function (user) {
-                    //console.log(user.name, user.login, user.repos, user)
+                    // console.log(user.name, user.login, user.repos, user);
                     numberOfUsers ++;
                 });
 
-            });
+            }, {start_page : 1});
         }, "asynchronous method : search()");
 
         waitsFor(function () {
             return numberOfUsers > 10;
-        }, "...", 1000);
+        }, "...", 3000);
 
         runs(function () {
             expect(numberOfUsers).toBeGreaterThan(10);
@@ -243,18 +241,18 @@ describe("Search users by keyword mad", function() {
         var numberOfUsers = 0;
 
         runs(function () {
-            Gh3.Users.search("mad", {start_page : 3}, function (err, response) {
+            user_search.fetch(function (err, response) {
                 if(err) { throw "outch ..."; }
                 response.each(function (user) {
                     numberOfUsers ++;
                 });
 
-            });
+            }, {start_page : 3});
         }, "asynchronous method : search()");
 
         waitsFor(function () {
             return numberOfUsers > 10;
-        }, "...", 1000);
+        }, "...", 3000);
 
         runs(function () {
             expect(numberOfUsers).toBeGreaterThan(10);
@@ -309,22 +307,23 @@ describe("Fetch data of repositories of a gitHub user : k33g", function () {
 });
 
 describe("Search public repositories by keyword : pdf", function () {
-    var numberOfFoundRepositories = 0;
+    var repo_search = new Gh3.Repository.Search()
+    ,   numberOfFoundRepositories = 0;
 
     it("should find more than 30 public repositories on page 2", function () {
 
 
         runs(function () {
 
-            Gh3.Repositories.search("pdf", {start_page : 2}, function (err, res) {
+            repo_search.search("pdf", function (err, res) {
                 if(err) { throw "outch ..."; }
 
-                Gh3.Repositories.each(function (repository) {
+                repo_search.each(function (repository) {
                     numberOfFoundRepositories ++;
                 });
 
                 console.log(numberOfFoundRepositories);
-            });
+            }, {start_page : 2});
 
 
         }, "asynchronous method : search()");
