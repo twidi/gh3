@@ -1107,7 +1107,7 @@
     Gh3.Repository = SingleObject.extend({
         /* This class represent a Github repository, belonging to a user
          */
-        constructor : function (name, ghUser, infos) {
+        constructor : function (name, ghUser, infos, ghParent) {
             /* Save mandatory name and user, call the super constructor, create
              * a link to fetch the readme later, and some lists
              */
@@ -1118,6 +1118,8 @@
             } else {
                 throw "name && user !";
             }
+
+            this.parent = ghParent || null;
 
             Gh3.Repository.__super__.constructor.call(this, infos);
 
@@ -1227,6 +1229,13 @@
     Collection.RepositoryForks = Collection._RepositoriesList.extend({
         /* List of a repsitory's forks
          */
+        _prepareItem: function(item) {
+            /* Simply create a Gh3.Repository with raw data from the api, with
+             * the parent set
+             */
+            var owner = new Gh3.User(item.owner.login, item.owner);
+            return new Gh3.Repository(item.name, owner, item, this.parent);
+        },
         _service: function() { return this.parent._service() + "/forks"; }
     });
 
