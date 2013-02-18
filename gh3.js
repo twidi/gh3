@@ -1040,7 +1040,6 @@
     Gh3.Repository = SingleObject.extend({
         /* This class represent a Github repository, belonging to a user
          */
-        // TODO: manage parent fork as a Gh3.Repository
         constructor : function (name, ghUser, infos) {
             /* Save mandatory name and user, call the super constructor, create
              * a link to fetch the readme later, and some lists
@@ -1075,15 +1074,30 @@
             this.readmeFetcher.fetch(callback, querystring_args);
         },
         _setData: function(data) {
-            /* Update the user object and set normal fields
+            /* Update the user, source and parent, and set normal fields
              */
-            var user;
+            var user, parent, source;
 
             if (data) {
                 if (data.owner) {
                     this.user._setData(data.owner);
                 }
+                if (data.source) {
+                    if (!this.source) {
+                        this.source = new Gh3.Repository(data.source.name, new Gh3.User(data.source.owner.login, data.source.owner));
+                    }
+                    this.source._setData(data.source);
+                }
+                if (data.parent) {
+                    if (!this.parent) {
+                        this.parent = new Gh3.Repository(data.parent.name, new Gh3.User(data.parent.owner.login, data.parent.owner));
+                    }
+                    this.parent._setData(data.parent);
+                }
+
                 delete data.owner;
+                delete data.parent;
+                delete data.source;
             }
 
             Gh3.Repository.__super__._setData.call(this, data);
