@@ -615,11 +615,13 @@
     Gh3.Gist = SingleObject.extend({
         /* This class represent a Github Gist
          */
-        // TODO: manage forks and owner
-        constructor : function (gistData) {
+        // TODO: manage forks and history
+        constructor : function (gistData, ghUser) {
             /* The constructor define two lists, to hold files and comments,
              * then call the super constructor to save given data with _setData
              */
+
+            this.user = ghUser || null;
             this.files = new Collection.GistFiles(this);
             this.comments = new Collection.GistComments(this);
 
@@ -631,11 +633,19 @@
              * the comments list.
              * And call the super _setData to save normal fields
              */
-            var files = data.files;
-            delete data.files;
+            var files = data.files,
+                user = data.user;
 
             data.comment_count = data.comments;
+
+            delete data.files;
+            delete data.user;
             delete data.comments;
+
+            if (user) {
+                if (!this.user) { this.user = new Gh3.User(user.login); }
+                this.user._setData(user);
+            }
 
             Gh3.Gist.__super__._setData.call(this, data);
 
@@ -681,8 +691,7 @@
         _prepareItem: function(item) {
             /* Simply create a Gh3.Gist with raw data from the api
              */
-            // TODO: pass the owner ?
-            return new Gh3.Gist(item);
+            return new Gh3.Gist(item, this.parent);
         },
         _service: function() {
             return this.parent._service() + "/gists";
