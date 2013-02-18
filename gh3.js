@@ -615,7 +615,7 @@
     Gh3.Gist = SingleObject.extend({
         /* This class represent a Github Gist
          */
-        // TODO: manage forks
+        // TODO: manage forks and owner
         constructor : function (gistData) {
             /* The constructor define two lists, to hold files and comments,
              * then call the super constructor to save given data with _setData
@@ -649,8 +649,14 @@
     Gh3.GistComment = SingleObject.extend({
         /* This class represent a Github gist comment, but does nothing specific
          */
-        // TODO: manage user as a Gh3.User, and it's "_service" method, and pass
-        //       the gist to the constructor
+        // TODO: manage user as a Gh3.User
+        constructor : function (gistCommentData, ghGist) {
+            /* Save the parent gist then call the super constructor to save
+             * given data with _setData
+             */
+            this.gist = ghGist;
+            Gh3.GistComment.__super__.constructor.call(this, gistCommentData);
+        }
     });
 
     Collection.GistComments = Collection._Base.extend({
@@ -659,8 +665,7 @@
         _prepareItem: function(item) {
             /* Simply create a Gh3.GistComment with raw data from the api
              */
-            // TODO: pass the gist too ?
-            return new Gh3.GistComment(item);
+            return new Gh3.GistComment(item, this.parent);
         },
         _service: function() {
             return this.parent._service() + "/comments";
@@ -686,7 +691,13 @@
          * As a gist file is not specifically fetchable, this object as no "_service"
          * method.
          */
-        // TODO: pass the gist to the constructor
+        constructor : function (gistFileData, ghGist) {
+            /* Save the parent gist then call the super constructor to save
+             * given data with _setData
+             */
+            this.gist = ghGist;
+            Gh3.GistFile.__super__.constructor.call(this, gistFileData);
+        }
     });
 
     Collection.GistFiles = Collection._Base.extend({
@@ -696,7 +707,7 @@
             /* Simply create a Gh3.GistComment with raw data from the api
              */
             // TODO: pass the gist too ?
-            return new Gh3.GistFile(item);
+            return new Gh3.GistFile(item, this.parent);
         },
         getByName: function(name) {
             /* Override the getByName default method, because a GistFile has a
