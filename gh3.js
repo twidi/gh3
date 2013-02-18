@@ -1080,13 +1080,10 @@
             var user;
 
             if (data) {
-                user = data.user;
-
-                if (user) {
-                    this.user._setData(user);
+                if (data.owner) {
+                    this.user._setData(data.owner);
                 }
-
-                delete data.user;
+                delete data.owner;
             }
 
             Gh3.Repository.__super__._setData.call(this, data);
