@@ -656,6 +656,9 @@
              */
             this.gist = ghGist;
             Gh3.GistComment.__super__.constructor.call(this, gistCommentData);
+        },
+        _service: function() {
+            return this.gist._service() + "/comments/" + this.id;
         }
     });
 
