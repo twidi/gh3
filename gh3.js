@@ -696,9 +696,15 @@
 
         }, // _setData
         _baseService: function() {
+            /* Service to use for other objects, because the normal _service
+             * method add the version if any (but comments and forks) are
+             * linked to the gist, not a specific version
+             */
             return "gists/" + this.id;
         },
         _service: function() {
+            /* Add the version if any. Use _baseService for linked objects
+             */
             var service = this._baseService();
             if (this.version) {
                 service += "/" + this.version;
