@@ -633,23 +633,21 @@
              * the comments list.
              * And call the super _setData to save normal fields
              */
-            var files = data.files,
-                user = data.user;
+            if (data.user) {
+                if (!this.user) { this.user = new Gh3.User(data.user.login); }
+                this.user._setData(data.user);
+                delete data.user;
+            }
+            if (data.files) {
+                this.files._setItems(data.files);
+                delete data.files;
+            }
 
             data.comment_count = data.comments;
-
-            delete data.files;
-            delete data.user;
             delete data.comments;
-
-            if (user) {
-                if (!this.user) { this.user = new Gh3.User(user.login); }
-                this.user._setData(user);
-            }
 
             Gh3.Gist.__super__._setData.call(this, data);
 
-            this.files._setItems(files);
         }, // _setData
         _service: function() {
             return "gists/" + this.id;
@@ -869,23 +867,22 @@
              * lists.
              * And call the super _setData to save normal fields
              */
-            var author = data.authors,
-                commiter = data.commiter,
-                files = data.files;
-            if (author) {
-                this.author = new Gh3.User(author.login, author);
-                delete data.authors;
+            if (data.author) {
+                if (!this.author) { this.author = new Gh3.User(data.author.login); }
+                this.author._setData(data.author);
+                delete data.author;
             }
-            if (commiter) {
-                if (commiter.login != author.login) {
-                    this.commiter = new Gh3.User(commiter.login, commiter);
+            if (data.commiter) {
+                if (!this.author || data.commiter.login != this.author.login) {
+                    if (!this.commiter) { this.commiter = new Gh3.User(data.commiter.login); }
+                    this.commiter._setData(data.commiter);
                 } else {
                     this.commiter = this.author;
                 }
                 delete data.commiter;
             }
-            if (files) {
-                this.files._setItems(files);
+            if (data.files) {
+                this.files._setItems(data.files);
                 delete data.files;
             }
             Gh3.Commit.__super__._setData.call(this, data);
@@ -908,10 +905,15 @@
         _setData: function(data) {
             /* Save the file fields as a Gh3File, based on the filename
              */
-            this.file = new Gh3.File({
+            var file_data = {
                 sha: data.sha,
                 filename: data.filename
-            }, this.commit.branch);
+            };
+            if (!this.file) {
+                this.file = new Gh3.File(file_data, this.commit.branch);
+            } else {
+                this.file._setData(file_data);
+            }
             Gh3.CommitFile.__super__._setData.call(this, data);
         }
     }); // CommitFile
@@ -1014,7 +1016,10 @@
              * as a "head_commit" field defined as a Gh3.Commit
              */
             if (data.commit) {
-                this.head_commit = new Gh3.Commit(data.commit, this);
+                if (!this.head_commit || this.head_commit.sha != data.commit.sha) {
+                    this.head_commit = new Gh3.Commit({sha: data.commit.sha}, this);
+                }
+                this.head_commit._setData(data.commit);
                 delete data.commit;
             }
             Gh3.Branch.__super__._setData.call(this, data);
@@ -1076,28 +1081,25 @@
         _setData: function(data) {
             /* Update the user, source and parent, and set normal fields
              */
-            var user, parent, source;
-
             if (data) {
                 if (data.owner) {
                     this.user._setData(data.owner);
+                    delete data.owner;
                 }
                 if (data.source) {
                     if (!this.source) {
                         this.source = new Gh3.Repository(data.source.name, new Gh3.User(data.source.owner.login, data.source.owner));
                     }
                     this.source._setData(data.source);
+                delete data.source;
                 }
                 if (data.parent) {
                     if (!this.parent) {
                         this.parent = new Gh3.Repository(data.parent.name, new Gh3.User(data.parent.owner.login, data.parent.owner));
                     }
                     this.parent._setData(data.parent);
+                    delete data.parent;
                 }
-
-                delete data.owner;
-                delete data.parent;
-                delete data.source;
             }
 
             Gh3.Repository.__super__._setData.call(this, data);
